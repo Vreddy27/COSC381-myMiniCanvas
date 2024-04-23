@@ -45,13 +45,25 @@ class Course:
     def import_students(self, student_list):
         # the admin should import the students to a course
         self.student_list = student_list
-    
+
+    def validate_teacher_list(self):
+        for teacher in self.teacher_list:
+            if not isinstance(teacher, str):
+                return False
+        return True
+
+    def validate_student_list(self):
+        for student in self.student_list:
+            if not isinstance(student, str):
+                return False
+        return True
+
     def create_an_assignment(self, due_date):
         new_assignment_id = self.generate_assignment_id()
-        new_assignment = Assignment(new_assignment_id, 
+        new_assignment = Assignment(new_assignment_id,
                                     due_date, self.course_id)
         self.assignment_list.append(new_assignment)
-    
+
     def generate_assignment_id(self):
         self.assignment_counter += 1
         return self.assignment_counter

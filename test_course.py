@@ -1,7 +1,7 @@
-# test_course.py
-
 import pytest
 from course import Course, CourseManager
+import unittest
+
 
 @pytest.fixture
 def course_instance():
@@ -13,43 +13,80 @@ def course_manager_instance():
     # Fixture to create a CourseManager instance
     return CourseManager()
 
-class TestCourse:
-    def test_course_init(self, course_instance):
+class TestCourse(unittest.TestCase):
+    def setUp(self):
+        self.course_id = 1
+        self.course_code = "CS101"
+        self.semester = "Spring"
+        self.teacher_list = ["John Doe", "Jane Smith"]
+        self.student_list = ["Alice", "Bob"]
+        self.course = Course(self.course_id, self.course_code, self.semester, self.teacher_list)
+
+    def test_course_init(self):
         # Test __init__ method of Course class
-        course = course_instance
+        course = self.course
         
         # Assert that attributes are initialized correctly
-        assert course.course_id == 1
-        assert course.course_code == "COSC381"
-        assert course.semester == "Winter 2024"
-        assert course.teacher_list == ["Teacher1", "Teacher2"]
-        assert course.student_list == []
-        assert course.assignment_list == []
-        assert course.module_list == []
-        assert course.assignment_counter == 0
+        self.assertEqual(course.course_id, 1)
+        self.assertEqual(course.course_code, "CS101")
+        self.assertEqual(course.semester, "Spring")
+        self.assertEqual(course.teacher_list, ["John Doe", "Jane Smith"])
+        self.assertEqual(course.student_list, [])
+        self.assertEqual(course.assignment_list, [])
+        self.assertEqual(course.module_list, [])
+        self.assertEqual(course.assignment_counter, 0)
 
-    def test_import_students_method(self, course_instance):
+    def test_import_students_method(self):
         # Test import_students method of Course class
-        course = course_instance
+        course = self.course
         students = ["Student1", "Student2"]
         course.import_students(students)
         
         # Assert that students are imported correctly
-        assert course.student_list == students
+        self.assertEqual(course.student_list, students)
 
-    def test_create_an_assignment_method(self, course_instance):
+    def test_create_an_assignment_method(self):
         # Test create_an_assignment method of Course class
-        course = course_instance
+        course = self.course
         due_date = "2024-04-20"
         course.create_an_assignment(due_date)
         
         # Assert that an assignment is created correctly
-        assert len(course.assignment_list) == 1
-        assert course.assignment_list[0].due_date == due_date
-        assert course.assignment_list[0].course_id == 1
+        self.assertEqual(len(course.assignment_list), 1)
+        self.assertEqual(course.assignment_list[0].due_date, due_date)
+        self.assertEqual(course.assignment_list[0].course_id, 1)
 
-    def test_generate_assignment_id_method(self, course_instance):
+    def test_generate_assignment_id_method(self):
         # Test generate_assignment_id method of Course class
-        course = course_instance
-        assert course.generate_assignment_id() == 1
-        assert course.generate_assignment_id() == 2
+        course = self.course
+        self.assertEqual(course.generate_assignment_id(), 1)
+        self.assertEqual(course.generate_assignment_id(), 2)
+
+    def test_validate_teacher_list_method(self):
+        # Test validate_teacher_list method of Course class
+        course = self.course
+        
+        # Assert that the teacher list is initially valid
+        self.assertTrue(course.validate_teacher_list())
+
+        # Add a non-string teacher to the list
+        course.teacher_list.append(123)
+        
+        # Assert that the teacher list is no longer valid
+        self.assertFalse(course.validate_teacher_list())
+
+    def test_validate_student_list_method(self):
+        # Test validate_student_list method of Course class
+        course = self.course
+
+        # Assert that the student list is initially valid
+        self.assertTrue(course.validate_student_list())
+
+        # Add a non-string student to the list
+        course.student_list.append(456)
+
+        # Assert that the student list is no longer valid
+        self.assertFalse(course.validate_student_list())
+
+if __name__ == '__main__':
+    unittest.main()
